@@ -7,11 +7,10 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 export default function CreateArticlePage() {
   const supabase = createClientComponentClient();
   const router = useRouter();
-
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +18,7 @@ export default function CreateArticlePage() {
     setError('');
 
     // 1️⃣ Pega o usuário autenticado
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
       setError('Você precisa estar logado para publicar.');
       setLoading(false);
@@ -36,8 +31,8 @@ export default function CreateArticlePage() {
       .insert({
         title,
         content,
-        owner_id: user.id,      // IMPORTANTE: RLS depende disso
-        published_at: null,     // define null se não quiser publicar ainda
+        owner_id: user.id,
+        published_at: null, // define null se não quiser publicar ainda
       });
 
     if (insertError) {
@@ -47,11 +42,11 @@ export default function CreateArticlePage() {
     }
 
     // 3️⃣ Redireciona para a página de artigos
-    router.push('/dashboard'); // ou '/articles' dependendo da sua rota
+    router.push('/dashboard/articles');
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
       <h1>Criar Artigo</h1>
       <form onSubmit={handleSubmit}>
         <input
@@ -75,3 +70,4 @@ export default function CreateArticlePage() {
     </div>
   );
 }
+
